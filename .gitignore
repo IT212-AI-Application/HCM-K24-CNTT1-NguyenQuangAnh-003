@@ -1,0 +1,15 @@
+# Build files
+*.class
+target/
+build/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Temporary/Log files
+*.log
