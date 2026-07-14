@@ -347,6 +347,4 @@ erDiagram
 ```
 
 #### Hình ảnh sơ đồ ERD hoàn chỉnh:
-Sơ đồ ERD đã được kết xuất ra tệp hình ảnh thực tế chất lượng cao tại: [docs/erd_diagram.png](file:///d:/AIApplication/RE12345_NguyenQuangAnh_Hackathon_AI_DE003/docs/erd_diagram.png)
-
-![Sơ đồ ERD Rikkei Cinema](file:///d:/AIApplication/RE12345_NguyenQuangAnh_Hackathon_AI_DE003/docs/erd_diagram.png)
+Sơ đồ ERD (Sơ đồ ERD Rikkei Cinema) đã được kết xuất ra tệp hình ảnh thực tế chất lượng cao tại: [docs/erd_diagram.png](file:///d:/AIApplication/RE12345_NguyenQuangAnh_Hackathon_AI_DE003/docs/erd_diagram.png)
