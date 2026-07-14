@@ -9,16 +9,50 @@
 * Áp dụng **Strategy kết hợp Registry Pattern** để quản lý mã giảm giá (Student, Festival). Logic áp dụng mã giảm giá được chuyển dịch từ các câu lệnh rẽ nhánh `if-else` lồng nhau phức tạp sang việc đăng ký và tra cứu chiến lược giảm giá linh hoạt trong một Registry.
 * Tách biệt cơ chế tích lũy điểm thành viên (`LoyaltyPointsCalculator`) và cơ chế gửi thông báo (`NotificationService`) thành các interface riêng biệt, giúp dễ dàng mở rộng hoặc thay thế phương thức nghiệp vụ trong tương lai.
 * Sử dụng **Dependency Injection** để đưa các thành phần phụ thuộc vào `TicketingService`, giảm thiểu liên kết chặt chẽ (tight coupling) và tăng tính bảo trì của hệ thống.
+* **Cấu trúc một tệp duy nhất:** Để tuân thủ đúng yêu cầu chỉ giữ lại duy nhất tệp [TicketingService.java](file:///d:/AIApplication/RE12345_NguyenQuangAnh_Hackathon_AI_DE003/src/com.rikkei/refactoring/TicketingService.java) trong thư mục `refactoring`, toàn bộ các interface và class liên quan đều được tích hợp gọn gàng dưới dạng các class phi công khai (non-public classes) trong cùng một file.
 
 ### 2. Lịch sử Prompt (Prompt Chain)
-* **Prompt 1 (Phân tích lỗi thiết kế ban đầu):** 
-  *"Tôi có một class `TicketingService` xử lý đặt vé xem phim. Hiện tại class này đang ôm đồm nhiều logic từ tính giá theo loại ghế, giảm giá, tích điểm đến gửi thông báo. Điều này vi phạm nguyên lý SOLID nào và bạn đề xuất hướng tái cấu trúc bằng Design Pattern nào để đảm bảo sau này thêm loại ghế hay mã giảm giá mới mà không cần sửa code cũ?"*
-* **Prompt 2 (Thiết kế Strategy cho tính giá ghế):** 
-  *"Hãy hiện thực hóa cơ chế tính giá ghế sử dụng Strategy Pattern. Hãy thiết kế sao cho việc thêm các loại ghế VIP, SWEETBOX hay NORMAL độc lập hoàn toàn với lớp tính toán giá cốt lõi."*
-* **Prompt 3 (Thiết kế Strategy cho mã giảm giá & Tiện ích):** 
-  *"Hãy tiếp tục viết code cho phần giảm giá sử dụng Strategy kết hợp Registry Pattern để tra cứu mã giảm giá linh hoạt. Thiết kế thêm các interface cho việc tính điểm loyalty và gửi thông báo."*
-* **Prompt 4 (Hợp nhất mã nguồn vào một file duy nhất):** 
-  *"Hãy giúp tôi gom toàn bộ interface, strategy, registry, service đã viết vào trong file `TicketingService.java` dưới dạng các non-public classes. Đồng thời cung cấp constructor mặc định khởi tạo sẵn các strategy gốc để đảm bảo chương trình kiểm thử bên ngoài vẫn chạy bình thường khi khởi tạo bằng `new TicketingService()` và đổi package thành `com.rikkei.refactoring`."*
+
+* **Prompt 1: Phân tích kiến trúc hiện tại và Đề xuất giải pháp tái cấu trúc**
+  ```markdown
+  [Role]: Bạn là một Chuyên gia Kiến trúc Phần mềm (Software Architect) có kinh nghiệm dày dặn về thiết kế hệ thống và nguyên lý SOLID.
+  [Context]: Tôi có một đoạn mã nguồn Java thực hiện đặt vé xem phim trong class `TicketingService`. Mã nguồn này đang gom chung logic tính giá ghế (Normal, VIP, Sweetbox), áp dụng mã giảm giá, tính điểm loyalty và gửi thông báo vào duy nhất một phương thức `bookTicket`, vi phạm nghiêm trọng nguyên lý Single Responsibility Principle (SRP) và Open/Closed Principle (OCP).
+  [Goal]: Hãy phân tích mã nguồn dưới đây và đề xuất phương án tái cấu trúc chi tiết bằng các Design Pattern phù hợp để khi thêm loại ghế mới, mã giảm giá mới, hoặc thay đổi cơ chế thông báo/loyalty, phương thức tính toán cốt lõi sẽ không bị sửa đổi.
+  [Constraint]: Hãy giải thích rõ nguyên lý thiết kế và sơ đồ cấu trúc các class đề xuất.
+  ```
+
+* **Prompt 2: Hiện thực cơ chế tính giá vé loại ghế bằng Strategy Pattern**
+  ```markdown
+  [Role]: Bạn là một Java Developer chuyên nghiệp, luôn tuân thủ Clean Code và nguyên lý SOLID.
+  [Task]: Hiện thực cơ chế tính giá vé dựa trên loại ghế bằng cách áp dụng Strategy Pattern.
+  [Requirements]:
+  1. Định nghĩa interface `SeatPricingStrategy` và các concrete class `NormalSeatPricing`, `VipSeatPricing`, `SweetboxSeatPricing`.
+  2. Tạo lớp điều phối `SeatPricingService` quản lý danh sách các strategy này để tự động tìm và áp dụng phương thức tính toán phù hợp.
+  3. Đảm bảo cấu trúc dễ mở rộng (ví dụ thêm ghế `COUPLE` chỉ cần viết thêm một class mới kế thừa).
+  [Output]: Trả về mã nguồn Java sạch kèm giải thích ngắn gọn.
+  ```
+
+* **Prompt 3: Hiện thực cơ chế Giảm giá (Strategy + Registry) & Tiện ích bổ sung**
+  ```markdown
+  [Role]: Bạn là một Java Developer chuyên nghiệp.
+  [Task]: Thiết lập cơ chế xử lý mã giảm giá áp dụng Strategy Pattern kết hợp với Registry/Factory Pattern, đồng thời tách biệt cơ chế Loyalty và Notification bằng Interface.
+  [Requirements]:
+  1. Thiết kế interface `DiscountStrategy` cùng các lớp triển khai `StudentDiscount` (giảm 10%), `FestivalDiscount` (giảm 40k), và `NoDiscount`.
+  2. Thiết kế `DiscountRegistry` để đăng ký các mã giảm giá và trả về `DiscountStrategy` tương ứng mà không dùng `if-else` lồng nhau.
+  3. Thiết kế interface `LoyaltyPointsCalculator` (mặc định: total/10000) và `NotificationService` (mặc định: push notification).
+  [Output]: Cung cấp mã nguồn Java tuân thủ Clean Code.
+  ```
+
+* **Prompt 4: Hợp nhất toàn bộ cấu trúc vào một tệp nguồn duy nhất**
+  ```markdown
+  [Role]: Bạn là một Java Refactoring Expert.
+  [Task]: Hợp nhất toàn bộ các interface và class đã tạo ở các bước trước vào duy nhất một tệp tin `TicketingService.java` thuộc package `com.rikkei.refactoring`.
+  [Requirements]:
+  1. Tệp tin chỉ chứa duy nhất lớp public `TicketingService`. Các interface và helper class/strategy khác phải được khai báo dưới dạng các lớp phi công khai (non-public/package-private) trong cùng tệp tin.
+  2. Cung cấp constructor mặc định `public TicketingService()` tự động đăng ký và khởi tạo tất cả các strategy mặc định của đề bài để tương thích ngược hoàn toàn với hệ thống kiểm thử ban đầu (không làm thay đổi cách khởi tạo `new TicketingService()`).
+  3. Cung cấp constructor nhận tham số để hỗ trợ Dependency Injection/Unit Testing.
+  [Output]: Mã nguồn Java hoàn chỉnh trong tệp `TicketingService.java`.
+  ```
 
 ### 3. Phân tích lỗi AI
 * **Lỗi chưa tối ưu ở lần sinh đầu tiên:**
@@ -44,12 +78,36 @@
 * **Mất tính linh hoạt:** Việc sử dụng cấu hình tập trung qua `AuthenticationEntryPoint` giúp Spring Security dễ dàng thay đổi cấu hình bảo mật hoặc thay đổi định dạng lỗi mà không cần chỉnh sửa mã nguồn hoạt động của từng Filter.
 
 ### 2. Lịch sử Prompt (Prompt Chain)
-* **Prompt 1 (Phân tích lỗi HTTP 500 tầng Filter):** 
-  *"Tại sao khi JWT ném ra `SignatureException` trong `OncePerRequestFilter`, Spring Boot lại trả về HTTP 500 thay vì HTTP 401 mặc dù tôi đã cấu hình `@ControllerAdvice`? Làm thế nào để bắt lỗi này một cách tập trung chuẩn Spring Security?"*
-* **Prompt 2 (Hiện thực lớp xử lý lỗi tập trung):** 
-  *"Hãy viết mã nguồn cho `JwtAuthenticationEntryPoint` trả về mã lỗi HTTP 401 với định dạng JSON `{"error": "UNAUTHORIZED", "message": "..."}` và viết class ngoại lệ `JwtAuthenticationException`."*
-* **Prompt 3 (Cấu hình tích hợp vào bộ lọc JWT):** 
-  *"Hãy sửa lại lớp `JwtAuthenticationFilter` để bắt `SignatureException`, `ExpiredJwtException`, `MalformedJwtException` và chuyển tiếp cho `JwtAuthenticationEntryPoint` xử lý."*
+
+* **Prompt 1: Phân tích lỗi HTTP 500 ở tầng Filter và Luồng Exception**
+  ```markdown
+  [Role]: Bạn là một Chuyên gia Bảo mật và Phát triển Web với Spring Boot Security.
+  [Context]: Lớp bộ lọc `JwtAuthenticationFilter` (kế thừa `OncePerRequestFilter`) của tôi ném ra lỗi `io.jsonwebtoken.security.SignatureException` khi gặp token sai chữ ký. Mặc dù tôi đã cấu hình bộ xử lý ngoại lệ toàn cục `@ControllerAdvice` / `@ExceptionHandler`, server vẫn bị crash và trả về HTTP 500 thay vì HTTP 401 Unauthorized kèm theo JSON lỗi.
+  [Question]:
+  1. Tại sao ngoại lệ này không được bắt bởi `@ControllerAdvice`? Hãy giải thích luồng đi của request qua Filter Chain và DispatcherServlet.
+  2. Làm thế nào để xử lý tập trung tất cả lỗi xác thực tại tầng Filter theo chuẩn của Spring Security để trả về JSON thống nhất dạng `{"error": "UNAUTHORIZED", "message": "..."}`?
+  ```
+
+* **Prompt 2: Hiện thực lớp Xử lý lỗi xác thực tập trung**
+  ```markdown
+  [Role]: Bạn là một Spring Security Developer.
+  [Task]: Hiện thực cơ chế xử lý lỗi xác thực tập trung cho JWT.
+  [Requirements]:
+  1. Viết lớp ngoại lệ tùy chỉnh `JwtAuthenticationException` kế thừa từ `AuthenticationException` của Spring Security.
+  2. Viết lớp `JwtAuthenticationEntryPoint` hiện thực `AuthenticationEntryPoint` để bắt lỗi tập trung, thiết lập mã trạng thái HTTP 401 Unauthorized, định dạng header và ghi response JSON thống nhất: `{"error": "UNAUTHORIZED", "message": "..."}`.
+  [Output]: Cung cấp mã nguồn Java chi tiết.
+  ```
+
+* **Prompt 3: Tích hợp Bộ lọc JWT và Cấu hình SecurityFilterChain**
+  ```markdown
+  [Role]: Bạn là một Spring Security Integration Expert.
+  [Task]: Cập nhật bộ lọc `JwtAuthenticationFilter` để sử dụng `JwtAuthenticationEntryPoint` và cấu hình bộ lọc này vào chuỗi bảo mật.
+  [Requirements]:
+  1. Trong phương thức `doFilterInternal` của `JwtAuthenticationFilter`, bọc phần giải mã JWT bằng khối `try-catch` để bắt các ngoại lệ của thư viện JJWT (`SignatureException`, `ExpiredJwtException`, `MalformedJwtException`).
+  2. Khi bắt được ngoại lệ, ngắt chuỗi Filter và ủy quyền xử lý lỗi cho `JwtAuthenticationEntryPoint`.
+  3. Cung cấp lớp cấu hình `SecurityConfig` minh họa việc đăng ký `JwtAuthenticationEntryPoint` và thêm bộ lọc JWT trước `UsernamePasswordAuthenticationFilter` trong `SecurityFilterChain`.
+  [Output]: Mã nguồn Java đầy đủ cho `JwtAuthenticationFilter` và `SecurityConfig`.
+  ```
 
 ### 3. Phân tích lỗi AI
 * **Lỗi chưa tối ưu ở lần sinh code đầu tiên:**
@@ -64,13 +122,16 @@
 ### 1. Nhiệm vụ 1: Đề xuất Giải pháp Công nghệ (Tech Stack)
 
 #### Prompt yêu cầu AI đề xuất Tech Stack:
-> *"Chào bạn, tôi đang xây dựng một nền tảng công nghệ toàn diện cho chuỗi rạp chiếu phim Rikkei Cinema. Các yêu cầu cốt lõi bao gồm:
-> 1. Quản lý người dùng phân quyền (Khách hàng, Nhân viên soát vé, Quản lý).
-> 2. Nghiệp vụ định giá động dựa trên định dạng phim (2D/3D/IMAX).
-> 3. Phụ phí khung giờ: Khung giờ vàng (19h-21h) tăng 15%, Thứ 3 đồng giá 50.000 VNĐ cho vé 2D.
-> 4. Combo đồ ăn: Mua kèm Combo Family giảm 10% tổng giá trị vé.
-> 5. Đặt ghế Real-time: Khi một khách hàng bấm chọn ghế, ghế đó phải hiển thị trạng thái 'Dang giữ' trên màn hình của tất cả các khách hàng khác ngay lập tức.
-> Hãy đề xuất bộ Tech Stack hoàn chỉnh phù hợp (đặc biệt chú ý công nghệ xử lý Real-time) và đưa ra lý do thuyết phục khách hàng."*
+```markdown
+[Role]: Bạn là Chuyên gia Tư vấn Công nghệ (Solution Architect).
+[Context]: Khách hàng là chuỗi rạp chiếu phim Rikkei Cinema cần xây dựng nền tảng công nghệ đặt vé xem phim với các nghiệp vụ:
+- Phân quyền: Khách hàng, Nhân viên soát vé, Quản lý rạp.
+- Tính giá động: Giá gốc theo định dạng phim (2D/3D/IMAX); phụ phí khung giờ vàng (19h-21h) tăng 15%; thứ 3 đồng giá 50k cho vé 2D.
+- Combo đồ ăn: Family Combo giảm 10% tổng hóa đơn vé.
+- Giữ ghế Real-time: Khi người dùng bấm giữ ghế, trạng thái "Đang giữ" phải đồng bộ tức thời đến màn hình của tất cả người dùng khác.
+[Goal]: Đề xuất bộ Tech Stack hoàn chỉnh đáp ứng các yêu cầu trên, đặc biệt tập trung vào giải pháp xử lý Real-time chịu tải cao. Hãy trình bày lý do thuyết phục khách hàng.
+[Format]: Cấu trúc rõ ràng theo các tầng: Frontend, Backend, Database (SQL & NoSQL), Real-time Protocol, Infrastructure.
+```
 
 #### Tóm tắt giải pháp công nghệ đề xuất:
 * **Frontend:** ReactJS hoặc NextJS (sử dụng TypeScript) + TailwindCSS.
@@ -96,7 +157,16 @@
 ### 2. Nhiệm vụ 2: Phân tích Thực thể (Entity Analysis)
 
 #### Prompt yêu cầu AI bóc tách thực thể:
-> *"Dựa trên các nghiệp vụ của Rikkei Cinema, hãy bóc tách các thực thể (Entities) cốt lõi của cơ sở dữ liệu và các thuộc tính quan trọng của chúng (khóa chính, khóa ngoại, kiểu dữ liệu)."*
+```markdown
+[Role]: Bạn là Chuyên gia Thiết kế Cơ sở Dữ liệu (Database Architect).
+[Context]: Dựa trên các nghiệp vụ đặt vé, phân quyền, định giá động, combo đồ ăn và thanh toán của rạp chiếu phim Rikkei Cinema.
+[Task]: Phân tích và bóc tách các Thực thể (Entities) cốt lõi phục vụ lưu trữ dữ liệu lâu dài.
+[Requirements]: Với mỗi thực thể, hãy xác định:
+1. Tên thực thể.
+2. Các thuộc tính quan trọng kèm kiểu dữ liệu tương ứng.
+3. Xác định Khóa chính (Primary Key) và Khóa ngoại (Foreign Key) để thể hiện mối quan hệ.
+[Output]: Trình bày danh sách thực thể dưới dạng danh sách phân cấp rõ ràng.
+```
 
 #### Danh sách các thực thể (Entities):
 
@@ -178,7 +248,15 @@
 ### 3. Nhiệm vụ 3: Thiết kế Sơ đồ quan hệ thực thể (ERD)
 
 #### Prompt yêu cầu AI viết mã sơ đồ ERD:
-> *"Hãy tạo mã vẽ sơ đồ ERD bằng Mermaid dựa trên các thực thể đã chốt ở trên."*
+```markdown
+[Role]: Bạn là một Data Engineer và là chuyên gia về Mermaid.js.
+[Task]: Viết mã sơ đồ thực thể mối quan hệ (ERD) bằng Mermaid dựa trên danh sách các thực thể đã chốt của hệ thống đặt vé Rikkei Cinema bao gồm: USER, ROLE, USER_ROLE, MOVIE, SHOWTIME, SEAT, BOOKING, TICKET, FOOD_COMBO, BOOKING_FOOD_DETAIL, PAYMENT.
+[Requirements]:
+1. Sử dụng đúng cú pháp `erDiagram` của Mermaid.
+2. Thể hiện rõ các thuộc tính bên trong thực thể, ký hiệu khóa chính (PK) và khóa ngoại (FK).
+3. Sử dụng các ký hiệu quan hệ chuẩn (1-n, 1-1, n-n) và mô tả mối quan hệ bằng động từ rõ ràng.
+[Output]: Trả về duy nhất khối mã Mermaid.
+```
 
 #### Đoạn mã Mermaid đã dùng để vẽ sơ đồ ERD:
 ```mermaid
