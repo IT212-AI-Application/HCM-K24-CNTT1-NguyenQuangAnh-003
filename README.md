@@ -1,4 +1,4 @@
-# BÁO CÁO KẾT QUẢ HACKATHON AI - ĐỀ 03
+# BÁO CÁO KẾT QUẢ HACKATHON AI-APPLICATION - ĐỀ 03
 
 ---
 
@@ -9,7 +9,6 @@
 * Áp dụng **Strategy kết hợp Registry Pattern** để quản lý mã giảm giá (Student, Festival). Logic áp dụng mã giảm giá được chuyển dịch từ các câu lệnh rẽ nhánh `if-else` lồng nhau phức tạp sang việc đăng ký và tra cứu chiến lược giảm giá linh hoạt trong một Registry.
 * Tách biệt cơ chế tích lũy điểm thành viên (`LoyaltyPointsCalculator`) và cơ chế gửi thông báo (`NotificationService`) thành các interface riêng biệt, giúp dễ dàng mở rộng hoặc thay thế phương thức nghiệp vụ trong tương lai.
 * Sử dụng **Dependency Injection** để đưa các thành phần phụ thuộc vào `TicketingService`, giảm thiểu liên kết chặt chẽ (tight coupling) và tăng tính bảo trì của hệ thống.
-* **Cấu trúc một tệp duy nhất:** Để tuân thủ đúng yêu cầu chỉ giữ lại duy nhất tệp [TicketingService.java](file:///d:/AIApplication/RE12345_NguyenQuangAnh_Hackathon_AI_DE003/src/com.rikkei/refactoring/TicketingService.java) trong thư mục `refactoring`, toàn bộ các interface và class liên quan đều được tích hợp gọn gàng dưới dạng các class phi công khai (non-public classes) trong cùng một file.
 
 ### 2. Lịch sử Prompt (Prompt Chain)
 
